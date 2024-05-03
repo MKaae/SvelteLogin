@@ -5,39 +5,41 @@
   import Home from "./pages/Home/Home.svelte";
   import Rules from "./pages/Rules/Rules.svelte";
   import PrivateRoute from "./util/PrivateRoute.svelte";
+  import { onMount } from 'svelte';
 
-  import { onMount } from "svelte";
+  //Components basic tailwind components from Flowbite.com, rewritten to work with svelte.
 
-  let drawerTarget;
+  //Documentation from https://svelte.dev/repl/33d2066858a44c6e800f2377105d8c38?version=4.2.15
+  //Timer didn't look relevant, i suppose it happens a little fast but i think it works
+  let windowWidth;
+  let isSidebarOpen = true;
 
-  onMount(() => {
-    const drawerToggleButton = document.querySelector("[data-drawer-toggle]");
-    drawerTarget = document.getElementById("default-sidebar");
-
-    drawerToggleButton.addEventListener("click", toggleDrawer);
-    drawerTarget.addEventListener("click", closeSidebarOnClickInside);
-  });
-
-  function toggleDrawer(event) {
-    drawerTarget.classList.toggle("translate-x-0");
+  function setWindowWidth() {
+    windowWidth = window.innerWidth;
+    isSidebarOpen = windowWidth >= 768;
   }
 
-  function closeSidebarOnClickInside(event) {
-    if (drawerTarget.contains(event.target)) {
-      drawerTarget.classList.remove("translate-x-0");
-    }
+  onMount(() => {
+    setWindowWidth();
+    window.addEventListener('resize', setWindowWidth);
+
+    return () => {
+      window.removeEventListener('resize', setWindowWidth);
+    };
+  });
+
+  function toggleSidebar() {
+    isSidebarOpen = !isSidebarOpen;
   }
 </script>
 
 <Router>
   <button
-    data-drawer-target="default-sidebar"
-    data-drawer-toggle="default-sidebar"
-    aria-controls="default-sidebar"
-    type="button"
-    class=" inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 z-50"
+    aria-label="Open sidebar"
+    class="md:hidden inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 z-50"
+    on:click={toggleSidebar}
   >
-    <span class="sr-only">Open sidebar</span>
+    <span class="sr-only"></span>
     <svg
       class="w-6 h-6"
       aria-hidden="true"
@@ -52,12 +54,30 @@
       ></path>
     </svg>
   </button>
-
+  {#if isSidebarOpen}
   <aside
     id="default-sidebar"
-    class="fixed top-0 left-0 z-40 w-[200px] h-screen transition-transform -translate-x-full md:translate-x-0"
+    class="fixed top-0 left-0 z-40 w-[200px] h-screen transition-transform md:translate-x-0"
+    style="transform: translateX({ isSidebarOpen ? '0' : '-100%' })"
     aria-label="Sidenav"
+    on:resize={toggleSidebar}
   >
+    <button
+      aria-label="Close sidebar"
+      class="md:hidden absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+      on:click={toggleSidebar}
+    >
+      <svg
+        class="w-6 h-6"
+        aria-hidden="true"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M13.4142 10l4.2929-4.2929c.3905-.3905.3905-1.0237 0-1.4142s-1.0237-.3905-1.4142 0L12 8.5858 7.7071 4.2929c-.3905-.3905-1.0237-.3905-1.4142 0s-.3905 1.0237 0 1.4142L10.5858 10l-4.2929 4.2929c-.3905.3905-.3905 1.0237 0 1.4142s1.0237.3905 1.4142 0L12 11.4142l4.2929 4.2929c.3905.3905 1.0237.3905 1.4142 0s.3905-1.0237 0-1.4142L13.4142 10z" fill="lightgrey"/>
+    </svg>
+      
+    </button>
     <div
       class="overflow-y-auto py-5 px-3 h-full bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700"
     >
@@ -164,8 +184,8 @@
       </ul>
     </div>
   </aside>
-
-  <div>
+  {/if}
+  <div class="p-5">
     <Route path="/"><Home /></Route>
     <PrivateRoute path="/chatroom"><Chatroom /></PrivateRoute>
     <Route path="/auth"><SignupLogin /></Route>
