@@ -23,6 +23,7 @@
     "flowbite": "^2.3.0",
     "flowbite-svelte": "^0.46.1",
     "svelte-forms-lib": "^2.0.1",
+    "svelte-french-toast": "^1.2.0",
     "svelte-navigator": "^3.2.2",
     "tailwind-merge": "^2.3.0",
     "validator": "^13.11.0",

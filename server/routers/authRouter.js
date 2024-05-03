@@ -1,15 +1,11 @@
+import db from "../database/connection.js";
 import Router from "express";
 const router = Router();
-
-const userData = {
-    email: "",
-    password: ""
-}
 
 import { hashPw, isSame } from "./../util/passwordUtil.js";
 
 
-router.post("/auth/logout", (req, res) => {
+router.post("/api/logout", (req, res) => {
     req.session.destroy((error) => {
         if (error) {
             console.error("Error while logging out:", error);
@@ -20,35 +16,44 @@ router.post("/auth/logout", (req, res) => {
     });
 });
 
-router.post("/auth/signup", async (req, res) => {
-    userData.email = req.body.email;
-    userData.password = await hashPw(req.body.password);
-    if(userData.email && userData.password){
-        res.send({ data: `true` });
+import { sendEmail } from "../emailService/emailService.js";
+
+router.post("/api/signup", async (req, res) => {
+    const email = req.body.email;
+    
+    const checkEmailUnique = await db.get(`SELECT * FROM chatters WHERE email = ?`, [email])
+    
+    if(checkEmailUnique){
+        return res.send({ data: "Email already exists"});
+    }
+    
+    const password = await hashPw(req.body.password);
+
+    if(email && password){
+        const result = await db.run(`INSERT INTO chatters (email, password) VALUES(?, ?)`, [email, password])
+        sendEmail(email);
+        res.send({ lastId: result.lastID });
     } else {
         res.send({ data: "Missing fields" })
     }
 });
 
-router.post("/auth/login", async (req, res) => {
-
-    const authConfirmation = await isSame(req.body.password, userData.password)
+router.post("/api/login", async (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
     
-    if(req.body.email === userData.email && authConfirmation){
+    const user = await db.get(`SELECT * FROM chatters WHERE email = ?`, [email])
+    
+    const authConfirmation = await isSame(password, user.password)
+    
+    if(email === user.email && authConfirmation){
         req.session.user = {
-            email: userData.email,
+            email: email
         };
         res.send({ data: "correct" });
-    } else if (req.body.email !== userData.email){
-        res.send({ data: "Wrong username" });
     } else {
         res.send({ data: "Wrong password" });
     }
 });
-
-router.post("/auth/forgotPassword", (req, res) => {
-    const email = req.body.email;
-});
-
 
 export default router;

@@ -1,16 +1,12 @@
 import Router from "express";
+import { requireAuth } from "./authMiddleware.js";
+
 const router = Router();
 
-const rooms = [
-    { name: "chatroom1" },
-    { name: "chatroom2" },
-    { name: "chatroom3" },
-    { name: "chatroom4" },
-    { name: "chatroom5" },
-]
+const room = { number: 1 }
 
-router.get("/api/rooms", (req, res) => {
-    res.send({ data: rooms })
+router.get("/api/room", requireAuth, (req, res) => {
+    res.send({ data: room })
 });
 
 export default router;

@@ -3,9 +3,12 @@
   import * as yup from "yup";
   import { fetchPost } from "../../util/api.js";
   import { BASE_URL } from "../../stores/generalStore.js"
-  import { navigate } from "svelte-navigator";
-  
+  import { navigate, useLocation } from "svelte-navigator";
+  import { user } from "../../stores/generalStore.js"
+  import toast, {Toaster} from 'svelte-french-toast'
+
   let showSignUp = true;
+  const location = useLocation();
 
   const {
     form: form1,
@@ -33,7 +36,16 @@
         email: values.email,
         password: values.password,
       };
-      await fetchPost($BASE_URL + "/auth/signup", body);
+      const result = await fetchPost($BASE_URL + "/signup", body);
+      if(result === "Email already exists"){
+        toast.error("Email already exists.", {
+        position: "bottom-center"
+      })
+      } else { 
+        toast.success("Signup successful, ready to login.", {
+          position: "bottom-center"
+        })
+      }
       showSignUp = false;
     },
   });
@@ -57,11 +69,15 @@
         email: values.emaillogin,
         password: values.passwordlogin,
       };
-      const result = await fetchPost($BASE_URL + "/auth/signup", body);
-      if(result === "correct"){
-        navigate("/chatrooms")
+      const result = await fetchPost($BASE_URL + "/login", body);
+      if(result == "correct"){
+        user.set( values.emaillogin, values.passwordlogin )
+        const from = ($location.state && $location.state.from) || "/";
+        navigate(from, {replace: true})
       } else {
-        return;
+        toast.error("Error processing login.", {
+          position: "bottom-center"
+        })
       } 
     },
   });
@@ -170,7 +186,8 @@
             >
           </form>
           <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-            Already have an account? <button
+            Already have an account? 
+            <button
               id="button-form"
               on:click={() => (showSignUp = !showSignUp)}
               class="font-medium text-primary-600 hover:underline dark:text-primary-500"
@@ -256,8 +273,10 @@
         </div>
       </div>
     </div>
+    <Toaster />
   </div>
 </div>
+
 
 <style>
   small {

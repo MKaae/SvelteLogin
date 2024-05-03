@@ -1,7 +1,7 @@
 <script>
   import { Router, Link, Route } from "svelte-navigator";
   import SignupLogin from "./pages/SignupLogin/SignupLogin.svelte";
-  import Chatrooms from "./pages/Chatrooms/Chatrooms.svelte";
+  import Chatroom from "./pages/Chatroom/Chatroom.svelte";
   import Home from "./pages/Home/Home.svelte";
   import Rules from "./pages/Rules/Rules.svelte";
   import PrivateRoute from "./util/PrivateRoute.svelte";
@@ -85,7 +85,7 @@
         </li>
         <li>
           <Link
-            to="/chatrooms"
+            to="/chatroom"
             class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg 
               dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
           >
@@ -104,7 +104,7 @@
                 d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"
               ></path></svg
             >
-            <span class="flex-1 ml-3 whitespace-nowrap">Chatrooms</span>
+            <span class="flex-1 ml-3 whitespace-nowrap">Chatroom</span>
           </Link>
         </li>
         <li>
@@ -167,7 +167,7 @@
 
   <div>
     <Route path="/"><Home /></Route>
-    <PrivateRoute path="/chatrooms"><Chatrooms /></PrivateRoute>
+    <PrivateRoute path="/chatroom"><Chatroom /></PrivateRoute>
     <Route path="/auth"><SignupLogin /></Route>
     <Route path="/rules"><Rules /></Route>
   </div>

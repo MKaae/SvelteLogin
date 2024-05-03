@@ -2,11 +2,11 @@
   import { onMount } from "svelte";
   import { fetchGet } from "../../util/api";
   import { BASE_URL } from "../../stores/generalStore";
-
-    let chatrooms;  
+  
+    let chatroom;  
 
     onMount(async () => {
-        chatrooms = await fetchGet($BASE_URL + "/chatrooms")
+        chatroom = await fetchGet($BASE_URL + "/room")
     });
 </script>
 
