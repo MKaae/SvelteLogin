@@ -3,15 +3,15 @@ import "dotenv/config";
 import express from "express";
 const app = express();
 
-app.use(express.json());
-
 import cors from "cors";
 
 const corsOptions = {
     credentials: true,
     origin: "http://localhost:5173"
 }
-app.use(cors(corsOptions));
+app.use(cors(corsOptions));;
+
+app.use(express.json());
 
 import session from "express-session";
 app.use(session({
@@ -21,6 +21,7 @@ app.use(session({
   cookie: { secure: false }
 }))
 
+//prepared for chat will also implement escape-html, will wait for sockets class before i try
 import helmet from "helmet";
 app.use(helmet());
 
@@ -42,15 +43,15 @@ const authRateLimiter = rateLimit({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
 });
 
-app.use("auth", authRateLimiter);
+app.use("/api/login", authRateLimiter);
 
 import authRouter from "./routers/authRouter.js";
 app.use(authRouter);
 
-app.use("api/rooms", limiter);
+app.use("/api/room", limiter);
 
-import roomsRouter from "./routers/roomsRouter.js";
-app.use(roomsRouter);
+import roomRouter from "./routers/roomRouter.js";
+app.use(roomRouter);
 
 
 const PORT = process.env.PORT ?? 8080;

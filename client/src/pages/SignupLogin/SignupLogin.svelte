@@ -7,6 +7,8 @@
   import { user } from "../../stores/generalStore.js"
   import toast, {Toaster} from 'svelte-french-toast'
 
+  // Found svelte-forms-lib and yup as an option for easier handling forms and errors by googling for form npms.
+  // It was relatively easy to use.
   let showSignUp = true;
   const location = useLocation();
 

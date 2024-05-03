@@ -3,10 +3,13 @@
   import { fetchGet } from "../../util/api";
   import { BASE_URL } from "../../stores/generalStore";
 
-  let chatroom;
+  let roomId;
+  let welcomeMessage = "Welcome to Chatroom";
+  let messages = [];
 
   onMount(async () => {
-    chatroom = await fetchGet($BASE_URL + "/room");
+    roomId = await fetchGet($BASE_URL + "/room");
+    welcomeMessage = `Welcome to Chatroom ${roomId}`;
   });
 </script>
 
@@ -17,19 +20,17 @@
     <div class="max-w-2xl mx-auto px-4">
       <div class="flex justify-center text-center items-center mb-6">
         <h2 class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
-          Welcome to Chatroom1
+          {welcomeMessage}
         </h2>
       </div>
       <div
         class="flex justify-between items-center rounded-lg rounded-t-lg border-gray-200 dark:bg-gray-800 border border-gray-200 p-4"
       >
-        <p class="text-white text-center">
-            This field will be full of text and randomly have to be resized along the way so it fits the content area
-            This field will be full of text and randomly have to be resized along the way so it fits the content area
-            This field will be full of text and randomly have to be resized along the way so it fits the content area
-            This field will be full of text and randomly have to be resized along the way so it fits the content area
-            This field will be full of text and randomly have to be resized along the way so it fits the content area
-        </p>
+      <div class="text-white text-center">
+        {#if messages.length === 0}
+          <p>No messages</p>
+        {/if}
+      </div>
       </div>
       <br>
       <form class="mb-6">
@@ -45,12 +46,12 @@
             required
           ></textarea>
         </div>
-        <button
+        <!-- <button
           type="submit"
           class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
         >
           Enter chat post
-        </button>
+        </button> -->
       </form>
     </div>
   </section>

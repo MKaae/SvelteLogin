@@ -3,10 +3,10 @@ import { requireAuth } from "./authMiddleware.js";
 
 const router = Router();
 
-const room = { number: 1 }
+const room = 1;
 
 router.get("/api/room", requireAuth, (req, res) => {
-    res.send({ data: room })
+    res.send({ data: room });
 });
 
 export default router;
